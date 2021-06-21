@@ -12,8 +12,6 @@
 
 
 #include "problemInfo_knp.hpp"
-#include "problemInfo_spp.hpp"
-#include "problemInfo_psp.hpp"
 #include "robustSolver.hpp"
 
 int main (int, char*[]) {
@@ -31,23 +29,6 @@ int main (int, char*[]) {
 
 		// Clone the KAdaptableInfo object
 		pInfo = knpInfo.clone();
-
-
-		// Other examples from the paper
-		/*
-		SPP data;
-		KAdaptableInfo_SPP sppInfo;
-		gen_SPP(data, 20, 0);
-		sppInfo.setInstance(data);
-		pInfo = sppInfo.clone();
-		*/
-		/*
-		PSP data;
-		KAdaptableInfo_PSP pspInfo;
-		gen_PSP(data, 3, false); // set to 'true' for piecewise affine decision rules
-		pspInfo.setInstance(data);
-		pInfo = pspInfo.clone();
-		*/
 
 		// CALL THE SOLVER
 		KAdaptableSolver S(*pInfo);

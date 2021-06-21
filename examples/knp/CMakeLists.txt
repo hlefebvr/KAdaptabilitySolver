@@ -1,0 +1,2 @@
+add_executable(knp_solve main_knp.cpp problemInfo_knp.cpp)
+target_link_libraries(knp_solve PUBLIC kadaptability)

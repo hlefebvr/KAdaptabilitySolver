@@ -45,3 +45,6 @@ build/
 
 # ignore all .pdf files in the doc/ directory
 # doc/**/*.pdf
+
+# CLion
+cmake-build-*
