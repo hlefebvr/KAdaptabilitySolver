@@ -36,8 +36,8 @@ bool KAdaptableInfo::isConsistentWithDesign() const {
 	if (numPolicies < 1) return 0;
 	if (C_XY.size() != numPolicies) return 0;
 	if (C_XYQ.size() != numPolicies) return 0;
-	if (B_Y.size() != numPolicies) return 0;
-	if (X.getTotalDefVarSize() <= 0) return 0;
+    if (B_Y.size() != numPolicies) return 0;
+    if (X.getTotalDefVarSize() <= 0) return 0;
 	if (Y.getTotalDefVarSize() < 0) return 0;
 	if (X.getTotalDefVarSize() != getNumFirstStage()) return 0;
 	if (Y.getTotalDefVarSize() != getNumSecondStage()) return 0;

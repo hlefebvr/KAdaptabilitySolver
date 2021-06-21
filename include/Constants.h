@@ -23,7 +23,7 @@
 #define EXCEPTION_Q 7          // Invalid size of uncertain parameters
 
 // Defaults
-#define TIME_LIMIT 7200
+#define TIME_LIMIT 3600
 #define MEMORY_LIMIT 3072
 #define NUM_THREADS 1
 

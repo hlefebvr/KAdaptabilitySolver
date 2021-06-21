@@ -2147,7 +2147,7 @@ int KAdaptableSolver::solve_KAdaptability(const unsigned int K, const bool h, st
 
 	// set options
 	setCPXoptions(env);
-	CPXXsetintparam(env, CPXPARAM_ScreenOutput, CPX_ON);
+	CPXXsetintparam(env, CPXPARAM_ScreenOutput, CPX_OFF);
 	CPXXchgprobtype(env, lp, CPXPROB_MILP); // to use callbacks
 	CPXXchgobjsen(env, lp, CPX_MIN);
 
@@ -2285,8 +2285,9 @@ int KAdaptableSolver::solve_KAdaptability(const unsigned int K, const bool h, st
 		if (solstat == CPXMIP_TIME_LIM_FEAS || solstat == CPXMIP_TIME_LIM_INFEAS) stat = "Time Lim";
 		if (solstat == CPXMIP_MEM_LIM_FEAS || solstat == CPXMIP_MEM_LIM_INFEAS) stat = "Mem Lim";
 		if (heuristic_mode) stat = "Heur";
-		write(std::cout, n, K, seed, stat, final_objval, total_solution_time, final_gap);
+		//write(std::cout, n, K, seed, stat, final_objval, total_solution_time, final_gap);
 
+		std::cout << pInfo->getSolFileName() << ',' << K << ',' << stat << ',' << final_objval << ',' << total_solution_time << ',' << final_gap << std::endl;
 
 		
 	}
