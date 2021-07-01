@@ -1,0 +1,2 @@
+add_executable(wjUj_solve main_wjUj.cpp problemInfo_wjUj.cpp wjUj_Instance.cpp wjUj_Instance.h)
+target_link_libraries(wjUj_solve PUBLIC kadaptability)
