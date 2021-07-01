@@ -3,18 +3,29 @@
 //
 
 #include <iostream>
+#include <fstream>
 #include "robustSolver.hpp"
-#include "problemInfo_mmkp.h"
-#include "mmkp_Instance.h"
+#include "problemInfo_mmkp_d.h"
+#include "../mmkp_continuous/mmkp_Instance.h"
 
 int main(int argc, const char** argv) {
 
     const bool heuristic_mode = false;
-    const unsigned int Kmax = 4;
+    const unsigned int Kmax = 10;
+    const bool generate_new_instance = true;
 
-    mmkp_Instance instance;
+    mmkp_Instance* instance = nullptr;
 
-    KAdaptableInfo_MMKP info(instance);
+    if (!generate_new_instance) {
+        instance = new mmkp_Instance("instance.txt", 0);
+    } else {
+        instance = new mmkp_Instance();
+        std::ofstream file("instance.txt");
+        file << *instance;
+        file.close();
+    }
+
+    KAdaptableInfo_MMKP info(*instance);
     info.build();
 
     KAdaptableSolver solver(info);

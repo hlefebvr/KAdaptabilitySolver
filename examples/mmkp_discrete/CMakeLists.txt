@@ -1,0 +1,2 @@
+add_executable(mmkp_discrete_solve main_mmkp_d.cpp problemInfo_mmkp_d.cpp ../mmkp_continuous/mmkp_Instance.h ../mmkp_continuous/mmkp_Instance.cpp)
+target_link_libraries(mmkp_discrete_solve PUBLIC kadaptability)

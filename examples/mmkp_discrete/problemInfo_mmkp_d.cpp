@@ -2,8 +2,8 @@
 // Created by henri on 21/06/21.
 //
 
-#include "problemInfo_mmkp.h"
-#include "mmkp_Instance.h"
+#include "problemInfo_mmkp_d.h"
+#include "../mmkp_continuous/mmkp_Instance.h"
 
 KAdaptableInfo_MMKP::KAdaptableInfo_MMKP(const mmkp_Instance &t_instance)
         : m_instance(&t_instance) {
@@ -15,7 +15,7 @@ void KAdaptableInfo_MMKP::build() {
     objectiveUnc = false;
     existsFirstStage = false;
     numFirstStage = m_instance->n_items() * m_instance->n_knapsacks() + 1;
-    numSecondStage = m_instance->n_items() * m_instance->n_knapsacks();
+    numSecondStage = ( m_instance->n_items() * m_instance->n_knapsacks() ) * 2;
     numPolicies = 1;
     solfilename = "result.txt";
 
@@ -57,6 +57,9 @@ void KAdaptableInfo_MMKP::makeVars() {
 
     // y(i,k) -> item i is selected
     Y.addVarType("y", 'B', 0, 1, m_instance->n_items(), m_instance->n_knapsacks());
+
+    // z(i,k) -> item i is selected with penalty
+    Y.addVarType("z", 'C', 0, 1, m_instance->n_items(), m_instance->n_knapsacks());
 }
 
 void KAdaptableInfo_MMKP::makeConsX() {
@@ -100,7 +103,7 @@ void KAdaptableInfo_MMKP::makeConsX() {
         }
         expr.sign('E');
         expr.RHS(1);
-        B_X.emplace_back(expr);
+        C_X.emplace_back(expr);
     }
 
     // C_XQ
@@ -111,6 +114,8 @@ void KAdaptableInfo_MMKP::makeConsY(unsigned int L) {
 
     const unsigned int I = m_instance->n_items();
     const unsigned int K = m_instance->n_knapsacks();
+
+    const bool use_objective_uncertainty = true;
 
     if (L == 0) {
         B_Y.clear();
@@ -125,7 +130,7 @@ void KAdaptableInfo_MMKP::makeConsY(unsigned int L) {
 
         B_Y[l].clear();
 
-        // LB
+        // LB y
         for (unsigned int i = 0 ; i < I ; ++i) {
             for (unsigned int k = 0 ; k < K ; ++k) {
                 ConstraintExpression expr;
@@ -136,11 +141,33 @@ void KAdaptableInfo_MMKP::makeConsY(unsigned int L) {
             }
         }
 
-        // UB
+        // UB y
         for (unsigned int i = 0 ; i < I ; ++i) {
             for (unsigned int k = 0 ; k < K ; ++k) {
                 ConstraintExpression expr;
                 expr.addTermX(getVarIndex_2(l, "y", i, k), 1);
+                expr.sign('L');
+                expr.RHS(1);
+                B_Y[l].emplace_back(expr);
+            }
+        }
+
+        // LB z
+        for (unsigned int i = 0 ; i < I ; ++i) {
+            for (unsigned int k = 0 ; k < K ; ++k) {
+                ConstraintExpression expr;
+                expr.addTermX(getVarIndex_2(l, "z", i, k), 1);
+                expr.sign('G');
+                expr.RHS(0);
+                B_Y[l].emplace_back(expr);
+            }
+        }
+
+        // UB z
+        for (unsigned int i = 0 ; i < I ; ++i) {
+            for (unsigned int k = 0 ; k < K ; ++k) {
+                ConstraintExpression expr;
+                expr.addTermX(getVarIndex_2(l, "z", i, k), 1);
                 expr.sign('L');
                 expr.RHS(1);
                 B_Y[l].emplace_back(expr);
@@ -160,8 +187,32 @@ void KAdaptableInfo_MMKP::makeConsY(unsigned int L) {
         for (unsigned int i = 0 ; i < I ; ++i) {
             for (unsigned int k = 0 ; k < K ; ++k) {
                 ConstraintExpression expr;
-                expr.addTermX(getVarIndex_1("x", i, k), -1);
                 expr.addTermX(getVarIndex_2(l, "y", i, k), 1);
+                expr.addTermX(getVarIndex_1("x", i, k), -1);
+                expr.RHS(0);
+                expr.sign('L');
+                C_XY[l].emplace_back(expr);
+            }
+        }
+
+        // capacities
+        for (unsigned int k = 0 ; k < K ; ++k) {
+            ConstraintExpression expr;
+            for (unsigned int i = 0 ; i < I ; ++i) {
+                expr.addTermX(getVarIndex_2(l, "y", i, k), m_instance->low_weight(i));
+                expr.addTermX(getVarIndex_2(l, "z", i, k), m_instance->high_weight(i) - m_instance->low_weight(i));
+            }
+            expr.RHS(m_instance->capacity());
+            expr.sign('L');
+            C_XY[l].emplace_back(expr);
+        }
+
+        // z_ij <= y_ik
+        for (unsigned int k = 0 ; k < K ; ++k) {
+            for (unsigned int i = 0 ; i < I ; ++i) {
+                ConstraintExpression expr;
+                expr.addTermX(getVarIndex_2(l, "z", i, k), 1);
+                expr.addTermX(getVarIndex_2(l, "y", i, k), -1);
                 expr.RHS(0);
                 expr.sign('L');
                 C_XY[l].emplace_back(expr);
@@ -169,17 +220,18 @@ void KAdaptableInfo_MMKP::makeConsY(unsigned int L) {
         }
 
         // objective
-        ConstraintExpression expr;
-        for (unsigned int i = 0 ; i < I ; ++i) {
-            for (unsigned int k = 0; k < K; ++k) {
-                expr.addTermX(getVarIndex_2(l, "y", i, k), m_instance->profit(i));
+        if (!use_objective_uncertainty) {
+            ConstraintExpression objective;
+            for (unsigned int i = 0; i < I; ++i) {
+                for (unsigned int k = 0; k < K; ++k) {
+                    objective.addTermX(getVarIndex_2(l, "y", i, k), m_instance->profit(i));
+                }
             }
+            objective.addTermX(getVarIndex_1("O", 0), 1);
+            objective.sign('G');
+            objective.RHS(0);
+            C_XY[l].emplace_back(objective);
         }
-        expr.addTermX(getVarIndex_1("O", 0), 1);
-        expr.sign('G');
-        expr.RHS(0);
-        C_XY[l].emplace_back(expr);
-
     }
 
     // C_XYQ
@@ -189,16 +241,34 @@ void KAdaptableInfo_MMKP::makeConsY(unsigned int L) {
 
         C_XYQ[l].clear();
 
-        // knapsacks constraints
-        for (unsigned int k = 0 ; k < K ; ++k) {
-            ConstraintExpression expr;
-            for (unsigned int i = 0 ; i < I ; ++i) {
-                expr.addTermX(getVarIndex_2(l, "y", i, k), m_instance->low_weight(i));
-                expr.addTermProduct(getVarIndex_2(l, "y", i, k), U.getParamIndex('q', i+1), m_instance->high_weight(i));
+        // objective
+        if (use_objective_uncertainty) {
+            ConstraintExpression objective;
+            for (unsigned int i = 0; i < I; ++i) {
+                for (unsigned int k = 0; k < K; ++k) {
+                    objective.addTermX(getVarIndex_2(l, "y", i, k), m_instance->profit(i));
+                    objective.addTermProduct(getVarIndex_2(l, "y", i, k), U.getParamIndex('q', i + 1),
+                                             -1 * m_instance->profit(i));
+                    objective.addTermProduct(getVarIndex_2(l, "z", i, k), U.getParamIndex('q', i + 1),
+                                             1 * m_instance->profit(i));
+                }
             }
-            expr.sign('L');
-            expr.RHS(m_instance->capacity());
-            C_XYQ[l].emplace_back(expr);
+            objective.addTermX(getVarIndex_1("O", 0), 1);
+            objective.sign('G');
+            objective.RHS(0);
+            C_XYQ[l].emplace_back(objective);
+        } else { // add y_i - z_ik <= 1 - phi_i
+            for (unsigned int i = 0; i < I; ++i) {
+                for (unsigned int k = 0; k < K; ++k) {
+                    ConstraintExpression expr;
+                    expr.addTermX(getVarIndex_2(l, "y", i, k), 1);
+                    expr.addTermX(getVarIndex_2(l, "z", i, k), -1);
+                    expr.addTermQ(U.getParamIndex('q', i+1), 1);
+                    expr.sign('L');
+                    expr.RHS('1');
+                    C_XYQ[l].emplace_back(expr);
+                }
+            }
         }
 
     }
