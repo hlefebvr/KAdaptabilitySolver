@@ -19,8 +19,4 @@ target_include_directories(kadaptability PUBLIC include)
 target_link_libraries(kadaptability PUBLIC solver::cplex)
 
 add_subdirectory(examples/knp)
-add_subdirectory(examples/psp)
-add_subdirectory(examples/spp)
-add_subdirectory(examples/mmkp_continuous)
-add_subdirectory(examples/mmkp_discrete)
 add_subdirectory(examples/wjUj)

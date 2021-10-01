@@ -1,2 +1,0 @@
-add_executable(spp_solve main_spp.cpp problemInfo_spp.cpp)
-target_link_libraries(spp_solve PUBLIC kadaptability)

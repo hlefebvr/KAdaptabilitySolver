@@ -1,2 +1,0 @@
-add_executable(psp_solve main_psp.cpp problemInfo_psp.cpp)
-target_link_libraries(psp_solve PUBLIC kadaptability)

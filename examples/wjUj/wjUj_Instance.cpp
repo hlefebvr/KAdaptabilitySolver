@@ -190,3 +190,7 @@ const std::vector<JobOccurence *>& wjUj_Instance::occurences() const {
 unsigned int wjUj_Instance::max_deadline() const {
     return _max_deadline;
 }
+
+double wjUj_Instance::gamma() const {
+    return _gamma;
+}

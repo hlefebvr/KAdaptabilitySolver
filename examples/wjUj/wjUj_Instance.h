@@ -62,6 +62,7 @@ public:
     const std::vector<Job*>& jobs() const;
     const std::vector<JobOccurence*>& occurences() const;
     unsigned int max_deadline() const;
+    double gamma() const;
 };
 
 
