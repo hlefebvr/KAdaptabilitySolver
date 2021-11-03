@@ -39,6 +39,11 @@ int main(int argc, const char** argv) {
             KAdaptableSolver solver(info);
             std::vector<double> x;
 
+            std::cout << source_instance.instance_filename_stripped()
+                      << "1,"
+                      << "k-adapt,"
+                      << source_instance.jobs().size() << ","
+                      << gamma << ',';
             auto solution_status = solver.solve_KAdaptability(k, heuristic_mode, x);
             if (solution_status != 0) {
                 break;

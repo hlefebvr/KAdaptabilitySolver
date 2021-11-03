@@ -244,7 +244,7 @@ void KAdaptableInfo_wjUj::build() {
     numFirstStage = m_instance->jobs().size() + 1; // U, O
     numSecondStage = m_instance->occurences().size() * 3; // y, t, z
     numPolicies = 1;
-    solfilename = "result.txt";
+    solfilename = m_instance->instance_filename();
 
     makeUncSet();
     makeVars();

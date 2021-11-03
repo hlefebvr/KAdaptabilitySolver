@@ -55,9 +55,10 @@ class wjUj_Instance {
     void apply_edf_rule();
     wjUj_Instance(const wjUj_Instance& src, bool);
 public:
-    const std::string& instance_filename() const;
-    wjUj_Instance(std::string  filename);
+    explicit wjUj_Instance(std::string  filename);
     virtual ~wjUj_Instance();
+    const std::string& instance_filename() const;
+    const std::string instance_filename_stripped() const;
     wjUj_Instance reversed() const;
     const std::vector<Job*>& jobs() const;
     const std::vector<JobOccurence*>& occurences() const;

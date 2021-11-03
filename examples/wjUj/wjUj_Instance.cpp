@@ -198,3 +198,7 @@ double wjUj_Instance::gamma() const {
 void wjUj_Instance::set_gamma(double t_gamma) {
     _gamma = t_gamma;
 }
+
+const std::string wjUj_Instance::instance_filename_stripped() const {
+    return _instance_filename.substr(_instance_filename.find_last_of("/\\") + 1);
+}

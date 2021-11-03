@@ -2285,9 +2285,21 @@ int KAdaptableSolver::solve_KAdaptability(const unsigned int K, const bool h, st
 		if (solstat == CPXMIP_TIME_LIM_FEAS || solstat == CPXMIP_TIME_LIM_INFEAS) stat = "Time Lim";
 		if (solstat == CPXMIP_MEM_LIM_FEAS || solstat == CPXMIP_MEM_LIM_INFEAS) stat = "Mem Lim";
 		if (heuristic_mode) stat = "Heur";
+
 		//write(std::cout, n, K, seed, stat, final_objval, total_solution_time, final_gap);
 
-		std::cout << pInfo->getSolFileName() << ',' << K << ',' << stat << ',' << final_objval << ',' << total_solution_time << ',' << final_gap << std::endl;
+        const auto path = pInfo->getSolFileName();
+        const auto filename = path.substr(path.find_last_of("/\\") + 1);
+
+		std::cout << filename
+                  << ',' << K
+                  << ',' << total_solution_time
+                  << ',' << final_objval
+                  << ',' << 0
+                  << ',' << stat
+                  << ',' << final_gap
+                  << ",default"
+                  << std::endl;
 
 		
 	}
