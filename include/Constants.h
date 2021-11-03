@@ -25,6 +25,6 @@
 // Defaults
 #define TIME_LIMIT 3600
 #define MEMORY_LIMIT 3072
-#define NUM_THREADS 1
+#define NUM_THREADS 4
 
 #endif

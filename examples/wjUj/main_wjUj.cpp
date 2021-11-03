@@ -12,12 +12,12 @@ int main(int argc, const char** argv) {
 
     const bool heuristic_mode = false;
     const unsigned int K = 2;
-    const unsigned int gamma = 2;
+    const unsigned int gamma = 1;
 
     wjUj_Instance source_instance("/home/henri/CLionProjects/KAdaptabilitySolver/examples/wjUj/example.txt", gamma);
-    wjUj_Instance reversed = source_instance.reversed();
+    //wjUj_Instance reversed = source_instance.reversed();
 
-    KAdaptableInfo_wjUj info(reversed);
+    KAdaptableInfo_wjUj info(source_instance);
     info.build();
 
     KAdaptableSolver solver(info);

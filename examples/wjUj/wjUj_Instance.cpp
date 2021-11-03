@@ -101,7 +101,7 @@ void wjUj_Instance::load_jobs_from_instance() {
                                std::stoi(line[ADDITIONAL_TIME]), std::stoi(line[MAX_DEGRADATION]),
                                std::stoi(line[OUTSOURCING_COST]));
             _jobs.emplace_back(job);
-            std::cout << "Created " << *job << std::endl;
+            //std::cout << "Created " << *job << std::endl;
         }
     });
 }
@@ -122,7 +122,7 @@ void wjUj_Instance::build_occurences_from_jobs() {
                 const unsigned int to = job_j.deadline;
                 auto new_occurence = new JobOccurence(job_i, from, to, false);
                 _occurences.emplace_back(new_occurence);
-                std::cout << "Created " << *new_occurence << std::endl;
+                //std::cout << "Created " << *new_occurence << std::endl;
             } else if (job_i.deadline <= job_j.release_date) {
                 break;
             }
@@ -131,11 +131,11 @@ void wjUj_Instance::build_occurences_from_jobs() {
 
         auto new_occurence = new JobOccurence(job_i, job_i.release_date, job_i.deadline, false);
         _occurences.emplace_back(new_occurence);
-        std::cout << "Created " << *new_occurence << std::endl;
+        //std::cout << "Created " << *new_occurence << std::endl;
 
         new_occurence = new JobOccurence(job_i, 0, 0, true);
         _occurences.emplace_back(new_occurence);
-        std::cout << "Created " << *new_occurence << std::endl;
+        //std::cout << "Created " << *new_occurence << std::endl;
     }
 }
 
