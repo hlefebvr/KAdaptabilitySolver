@@ -59,7 +59,7 @@ std::ostream &operator<<(std::ostream &os, const JobOccurence &job) {
 
 const std::string &wjUj_Instance::instance_filename() const { return _instance_filename; }
 
-wjUj_Instance::wjUj_Instance(std::string filename, float gamma) : _instance_filename(std::move(filename)), _gamma(gamma) {
+wjUj_Instance::wjUj_Instance(std::string filename) : _instance_filename(std::move(filename)) {
     load_jobs_from_instance();
     build_occurences_from_jobs();
     apply_edf_rule();
@@ -193,4 +193,8 @@ unsigned int wjUj_Instance::max_deadline() const {
 
 double wjUj_Instance::gamma() const {
     return _gamma;
+}
+
+void wjUj_Instance::set_gamma(double t_gamma) {
+    _gamma = t_gamma;
 }

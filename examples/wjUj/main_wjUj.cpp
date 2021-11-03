@@ -11,19 +11,40 @@
 int main(int argc, const char** argv) {
 
     const bool heuristic_mode = false;
-    const unsigned int K = 2;
-    const unsigned int gamma = 1;
 
-    wjUj_Instance source_instance("/home/henri/CLionProjects/KAdaptabilitySolver/examples/wjUj/example.txt", gamma);
-    //wjUj_Instance reversed = source_instance.reversed();
+    if (argc != 2) {
+        throw std::runtime_error("Usage: ./executable <PATH_TO_INSTANCE>");
+    }
 
-    KAdaptableInfo_wjUj info(source_instance);
-    info.build();
+    const std::string path_to_instance = argv[1];
+    const unsigned int maximum_K = 7; // maximum value for K
 
-    KAdaptableSolver solver(info);
-    std::vector<double> x;
+    wjUj_Instance source_instance(path_to_instance);
 
-    solver.solve_KAdaptability(K, heuristic_mode, x);
+    unsigned int maximum_gamma = 0; // maximum value for gamma
+    switch (source_instance.jobs().size()) {
+        case 5: maximum_gamma = 3;
+        case 10: maximum_gamma = 7;
+        default: maximum_gamma = 10;
+    }
+
+    for (unsigned int gamma = 1 ; gamma < maximum_gamma ; ++gamma) {
+
+        source_instance.set_gamma(gamma);
+
+        for (unsigned int k = 1; k <= maximum_K; ++k) {
+            KAdaptableInfo_wjUj info(source_instance);
+            info.build();
+
+            KAdaptableSolver solver(info);
+            std::vector<double> x;
+
+            auto solution_status = solver.solve_KAdaptability(k, heuristic_mode, x);
+            if (solution_status != 0) {
+                break;
+            }
+        }
+    }
 
     return 0;
 }

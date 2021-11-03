@@ -45,7 +45,7 @@ struct JobOccurence {
 
 class wjUj_Instance {
     const std::string _instance_filename;
-    const float _gamma;
+    float _gamma = 0.0;
     unsigned int _max_deadline = 0;
     std::vector<Job*> _jobs;
     std::vector<JobOccurence*> _occurences;
@@ -56,13 +56,14 @@ class wjUj_Instance {
     wjUj_Instance(const wjUj_Instance& src, bool);
 public:
     const std::string& instance_filename() const;
-    wjUj_Instance(std::string  filename, float gamma);
+    wjUj_Instance(std::string  filename);
     virtual ~wjUj_Instance();
     wjUj_Instance reversed() const;
     const std::vector<Job*>& jobs() const;
     const std::vector<JobOccurence*>& occurences() const;
     unsigned int max_deadline() const;
     double gamma() const;
+    void set_gamma(double t_gamma);
 };
 
 
