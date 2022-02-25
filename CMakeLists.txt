@@ -20,3 +20,4 @@ target_link_libraries(kadaptability PUBLIC solver::cplex)
 
 add_subdirectory(examples/knp)
 add_subdirectory(examples/wjUj)
+add_subdirectory(examples/wjUj_2)
