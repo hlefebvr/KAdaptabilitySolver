@@ -17,7 +17,7 @@ int main(int argc, const char** argv) {
     }
 
     const std::string path_to_instance = argv[1];
-    const unsigned int maximum_K = 7; // maximum value for K
+    const unsigned int maximum_K = 8; // maximum value for K
 
     wjUj_Instance source_instance(path_to_instance);
 
